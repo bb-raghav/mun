@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-hero page-hero-light"><div class="wrap page-hero-inner"><p class="eyebrow eyebrow-dark"><span class="eyebrow-rule"></span> The people behind the forum</p><h1>Secretariat &<br><em>team.</em></h1><p class="page-lead">Meet the four identified leaders of RNSIT MUN 2026. Their names and designations are confirmed; individual portraits and biographies can be added when supplied.</p></div><span class="page-hero-mark" aria-hidden="true">03</span></section>
+
+<section class="leadership-section section-pad wrap leadership-directory">
+  <div class="leadership-heading"><div><div class="section-kicker">01 <span>RNSIT MUN 2026</span></div><h2>The people behind<br><em>the conference.</em></h2></div><p>Leadership, vision and dedication that brought RNSIT MUN 2026 together.</p></div>
+  <div class="leadership-grid leadership-grid-directory">
+    {% for leader in leaders %}
+    <article class="leadership-card">
+      <div class="leadership-portrait" role="img" aria-label="{% if leader.image %}{{ leader.name }}{% else %}{{ leader.portrait_label }}{% endif %}">
+        {% if leader.image %}<img src="{{ url_for('static', filename=leader.image) }}" alt="{{ leader.name }}">
+        {% else %}<span class="portrait-orbit" aria-hidden="true"></span><span class="portrait-figure" aria-hidden="true"></span><span class="portrait-placeholder">{{ leader.portrait_label }}</span>{% endif %}
+        <span class="portrait-index">0{{ loop.index }}</span>
+      </div>
+      <div class="leadership-copy"><p class="leader-role">{{ leader.role }}</p><h3>{{ leader.name }}</h3><p>{{ leader.introduction }}</p></div>
+    </article>
+    {% endfor %}
+  </div>
+  <p class="leader-edit-note">Edit the <code>LEADERSHIP_2026</code> data in <code>main.py</code> to add confirmed names, roles, introductions and image paths relative to <code>static/</code>.</p>
+</section>
+
+<section class="section-pad wrap members-page"><div class="section-kicker">02 <span>Other team profiles</span></div>
+{% for group in groups %}<section class="member-group"><div class="member-group-heading"><h2>{{ group }}</h2><span>Profiles to be confirmed</span></div><div class="member-grid">{% for member in members if member.group == group %}<article class="member-card"><div class="member-photo" role="img" aria-label="Profile photograph placeholder"><span class="member-photo-orbit"></span><span>Photo<br>pending</span></div><div class="member-meta"><span class="member-role">{{ member.role }}</span><h3>{{ member.name }}</h3><p>{{ member.description }}</p></div></article>{% endfor %}</div></section>{% endfor %}
+</section>
+<section class="team-note"><div class="wrap team-note-inner"><span class="note-symbol" aria-hidden="true">i</span><p>Only the organising committee photograph is currently available. Add individual leadership portraits to the leadership data when approved; do not use the group image as a personal portrait.</p></div></section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-hero page-hero-light archive-page-hero"><div class="wrap page-hero-inner"><p class="eyebrow eyebrow-dark"><span class="eyebrow-rule"></span> RNSIT MUN editions</p><h1>Past<br><em>conferences.</em></h1><p class="page-lead">A growing archive of the people, ideas and moments that shape each RNSIT MUN edition.</p></div><span class="page-hero-mark" aria-hidden="true">06</span></section>
+
+<section class="archive-list section-pad wrap">
+  <div class="section-kicker">01 <span>Conference archive</span></div>
+  {% for entry in archive_entries %}
+  {% set conference = entry.conference %}
+  <article class="archive-card">
+    <div class="archive-photo-column">
+      {% if entry.photo %}
+      <button class="archive-photo-button" type="button" data-gallery-image data-src="{{ entry.photo.url }}" data-caption="{{ entry.photo.caption }}" aria-label="Open photograph: {{ entry.photo.caption }}"><img src="{{ entry.photo.url }}" alt="{{ entry.photo.caption }}" loading="lazy"><span class="archive-photo-open" aria-hidden="true">View photograph ↗</span></button>
+      <p class="archive-photo-caption">{{ entry.photo.caption }}</p>
+      {% else %}<div class="archive-photo-placeholder" role="img" aria-label="{{ conference.name }} organising committee photograph placeholder"><span>Organising committee<br>photograph to be added</span></div>{% endif %}
+    </div>
+    <div class="archive-copy">
+      <span class="event-badge event-badge-light">{{ conference.status }}</span>
+      <p class="eyebrow eyebrow-dark"><span class="eyebrow-rule"></span> RNSIT Model United Nations · {{ conference.year }}</p>
+      <h2>{{ conference.name }}</h2>
+      <p class="archive-subtitle">{{ conference.subtitle }}</p>
+      <p class="archive-description">{{ conference.description }}</p>
+      <p class="archive-date">{{ conference.date }}</p>
+      <div class="archive-highlights"><h3>Conference highlights</h3><ul class="event-highlights">{% for highlight in conference.highlights %}<li>{{ highlight }}</li>{% endfor %}</ul></div>
+      <a class="button button-navy archive-explore" href="{{ conference.website }}" target="_blank" rel="noopener noreferrer">Explore Conference <span aria-hidden="true">↗</span></a>
+      <a class="archive-small-link" href="{{ conference.website }}" target="_blank" rel="noopener noreferrer">Visit the MUN 2026 conference website <span aria-hidden="true">↗</span></a>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
+{% if photo_groups %}
+<section class="gallery-section section-pad archive-gallery" id="event-gallery"><div class="wrap"><div class="gallery-heading"><div><div class="section-kicker">02 <span>More photographs</span></div><h2>Conference<br><em>moments.</em></h2></div><p>Local photographs from <code>static/images/events/</code> are grouped by filename. The organising committee image above is shown once in its conference entry.</p></div>
+  {% for group in photo_groups %}<div class="gallery-category"><div class="gallery-category-title"><h3>{{ group.name }}</h3><span>{{ "%02d"|format(loop.index) }} / {{ "%02d"|format(photo_groups|length) }}</span></div><div class="gallery-grid">{% for photo in group.photos %}<button class="gallery-item" type="button" data-gallery-image data-src="{{ photo.url }}" data-caption="{{ photo.caption }}" aria-label="Open photograph: {{ photo.caption }}"><img src="{{ photo.url }}" alt="{{ photo.caption }}" loading="lazy"><span class="gallery-item-caption">{{ photo.caption }} <span aria-hidden="true">↗</span></span></button>{% endfor %}</div></div>{% endfor %}
+</div></section>
+{% endif %}
+
+<section class="future-editions"><div class="wrap future-editions-inner"><div><p class="eyebrow"><span class="eyebrow-rule"></span> The archive continues</p><h2>More editions<br><em>to come.</em></h2></div><div class="future-editions-note"><span class="future-edition-mark">+</span><p>Future RNSIT MUN conferences can be added to the <code>CONFERENCES</code> list in <code>main.py</code>, with confirmed dates, highlights and an approved photograph.</p></div></div></section>
+
+{% if photos %}<div class="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Conference photo viewer"><button class="lightbox-close" type="button" aria-label="Close photo viewer">×</button><button class="lightbox-prev" type="button" aria-label="Previous photo">←</button><figure><img src="" alt=""><figcaption></figcaption></figure><button class="lightbox-next" type="button" aria-label="Next photo">→</button><p class="lightbox-help">Use arrow keys to browse · Esc to close</p></div>{% endif %}
+{% endblock %}
