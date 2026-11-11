@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 # mun
-=======
 # RNSIT MUN website prototype
 
 A responsive website for RNSIT Model United Nations. It uses Flask and Jinja templates with one CSS file and one vanilla JavaScript file. The approved navy, ivory and muted gold palette is shared across all routes. The homepage includes a CSS animated dotted globe and a 2026 conference feature; the globe falls back to its static SVG artwork and stops moving for reduced-motion preferences.
@@ -134,4 +132,3 @@ If authentication fails, confirm that 2-Step Verification is enabled, that `SMTP
 ## Contact form
 
 The existing contact form remains a local demonstration form. It validates input and confirms receipt in the page but does not send email or persist the message.
->>>>>>> origin/master
