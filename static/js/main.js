@@ -30,6 +30,31 @@
     });
   }
 
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reducedMotion && "IntersectionObserver" in window) {
+    const pageSections = [...document.querySelectorAll("#main-content > section")];
+    const staggeredCards = ".team-leader, .leadership-card, .conference-committee-card, .award-card, .board-card, .department-row, .activity-item, .timeline-item, .committee-card, .resource-card";
+
+    pageSections.forEach((section) => {
+      section.classList.add("motion-section");
+      section.querySelectorAll(staggeredCards).forEach((item, index) => {
+        item.classList.add("motion-item");
+        item.style.setProperty("--motion-delay", `${Math.min(index, 5) * 65}ms`);
+      });
+    });
+
+    const sectionObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -7% 0px" });
+
+    pageSections.forEach((section) => sectionObserver.observe(section));
+  }
+
   document.querySelectorAll(".committee-toggle").forEach((button) => {
     button.addEventListener("click", () => {
       const details = button.nextElementSibling;

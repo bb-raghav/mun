@@ -12,205 +12,26 @@ import uuid
 
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, session, url_for
+from data.content import (
+    ACTIVITIES,
+    CONFERENCE,
+    EXECUTIVE_BOARD,
+    HISTORY,
+    ORGANISING_COMMITTEE,
+    PAGE_META,
+    RESOURCES,
+    SECRETARIAT,
+    SITE,
+    VENUE,
+)
 
 app = Flask(__name__)
 app.secret_key = "rnsit-mun-local-prototype"
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
-EVENTS_DIR = BASE_DIR / "static" / "images" / "events"
-ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
-CONFERENCE_2026_URL = "https://mun-gold.vercel.app/"
-CONFERENCE_2026_IMAGE = "IMG_6131.JPG"
 
-COMMITTEES = [
-    {
-        "name": "United Nations Security Council",
-        "short_name": "UNSC",
-        "type": "United Nations",
-        "description": "A forum for delegates to examine questions of international peace and security through negotiation and resolution writing.",
-        "agenda": "Illustrative agenda: strengthening international cooperation in conflict prevention.",
-        "overview": "The UNSC simulation introduces delegates to multilateral diplomacy, crisis response and the work of the United Nations Security Council.",
-        "responsibilities": "Research your assigned country, speak from its policy perspective, negotiate with other delegates and contribute to draft resolutions.",
-        "executive_board": "Executive Board details to be confirmed.",
-        "study_guide": None,
-        "symbol": "01",
-    },
-    {
-        "name": "United Nations Human Rights Council",
-        "short_name": "UNHRC",
-        "type": "United Nations",
-        "description": "A committee focused on human rights, international standards and constructive dialogue between states.",
-        "agenda": "Illustrative agenda: advancing access to education in humanitarian emergencies.",
-        "overview": "The UNHRC simulation invites delegates to consider human rights concerns through research, moderated debate and consensus building.",
-        "responsibilities": "Represent your country, support claims with research, engage respectfully in debate and help develop practical recommendations.",
-        "executive_board": "Executive Board details to be confirmed.",
-        "study_guide": None,
-        "symbol": "02",
-    },
-    {
-        "name": "United Nations General Assembly",
-        "short_name": "UNGA",
-        "type": "United Nations",
-        "description": "A broad multilateral forum where delegates discuss global challenges and work toward shared proposals.",
-        "agenda": "Illustrative agenda: responsible international cooperation on climate resilience.",
-        "overview": "The UNGA simulation gives delegates a platform to explore global issues and practice collaborative decision making.",
-        "responsibilities": "Understand your country's position, participate in formal and informal debate, and collaborate on working papers and resolutions.",
-        "executive_board": "Executive Board details to be confirmed.",
-        "study_guide": None,
-        "symbol": "03",
-    },
-    {
-        "name": "All India Political Parties Meet",
-        "short_name": "AIPPM",
-        "type": "Indian parliamentary simulation",
-        "description": "A political simulation for examining public policy, parliamentary procedure and competing viewpoints.",
-        "agenda": "Illustrative agenda: evaluating pathways for inclusive digital access.",
-        "overview": "The AIPPM simulation introduces delegates to parliamentary discussion and policy debate in an Indian political context.",
-        "responsibilities": "Research the assigned role and party perspective, make clear arguments, follow the committee procedure and negotiate policy proposals.",
-        "executive_board": "Executive Board details to be confirmed.",
-        "study_guide": None,
-        "symbol": "04",
-    },
-]
-
-RESOURCES = [
-    {
-        "title": "Rules of Procedure",
-        "category": "Conference Essentials",
-        "description": "A guide to motions, points and the flow of committee debate.",
-        "file": None,
-    },
-    {
-        "title": "Position Paper Guidelines",
-        "category": "Writing Guides",
-        "description": "A starting point for structuring a country policy paper.",
-        "file": None,
-    },
-    {
-        "title": "Research Guide for Delegates",
-        "category": "Research Guides",
-        "description": "Practical prompts for researching a country, agenda and policy options.",
-        "file": None,
-    },
-    {
-        "title": "Sample Position Paper",
-        "category": "Writing Guides",
-        "description": "A sample resource will be added after review by the organising team.",
-        "file": None,
-    },
-    {
-        "title": "Committee Background Guides",
-        "category": "Committee Guides",
-        "description": "Committee-specific background material will be published when confirmed.",
-        "file": None,
-    },
-]
-
-# Placeholder profiles intentionally contain no assumed personal identities.
-MEMBERS = [
-    {"name": "Name to be added", "role": "Secretariat designation to be confirmed", "group": "Secretariat", "description": "Profile details will be added with verified information.", "initials": "—"},
-    {"name": "Name to be added", "role": "Executive Board role to be confirmed", "group": "Executive Board", "description": "Profile details will be added with verified information.", "initials": "—"},
-    {"name": "Name to be added", "role": "Organising Committee role to be confirmed", "group": "Organising Committee", "description": "Profile details will be added with verified information.", "initials": "—"},
-    {"name": "Name to be added", "role": "Technical Team role to be confirmed", "group": "Technical Team", "description": "Profile details will be added with verified information.", "initials": "—"},
-]
-
-# Leadership photos and biographies can be added once the organising team supplies them.
-LEADERSHIP_2026 = [
-    {
-        "name": "Nikhil Nayak",
-        "role": "Secretary General",
-        "introduction": "",
-        "image": None,
-        "portrait_label": "Nikhil Nayak portrait to be added",
-    },
-    {
-        "name": "V. Koushik",
-        "role": "Director General",
-        "introduction": "",
-        "image": None,
-        "portrait_label": "V. Koushik portrait to be added",
-    },
-    {
-        "name": "Karthik Prasad M.",
-        "role": "Head of Equity",
-        "introduction": "",
-        "image": None,
-        "portrait_label": "Karthik Prasad M. portrait to be added",
-    },
-    {
-        "name": "Vamshi Ganesh",
-        "role": "Head of Equity",
-        "introduction": "",
-        "image": None,
-        "portrait_label": "Vamshi Ganesh portrait to be added",
-    },
-]
-
-EVENT = {
-    "name": "RNSIT MUN 2026",
-    "year": "2026",
-    "date": "06–07 October 2026",
-    "subtitle": "An Assembly of Ideas. A Dialogue of Nations.",
-    "description": "Two days of active debate, policy making and diplomacy at RNSIT.",
-    "purpose": "RNSIT MUN 2026 brought delegates together to debate, negotiate and explore policy through diplomacy.",
-    "status": "Completed",
-    "image_filename": CONFERENCE_2026_IMAGE,
-    "website": CONFERENCE_2026_URL,
-    "highlights": [
-        "150+ delegates from across colleges.",
-        "Six committees with diverse agendas and specialized councils.",
-        "Two days of debate, policy making and diplomacy.",
-        "₹1,00,000+ prize pool.",
-    ],
-    "statistics": [
-        {"value": "150+", "label": "Delegates"},
-        {"value": "6", "label": "Committees"},
-        {"value": "2", "label": "Conference days"},
-        {"value": "₹1,00,000+", "label": "Prize pool"},
-    ],
-}
-
-CONFERENCES = [EVENT]
-
-PHOTO_CATEGORIES = [
-    ("opening", "Opening Ceremony"),
-    ("committee", "Committee Sessions"),
-    ("delegate", "Delegate Discussions"),
-    ("executive-board", "Executive Board"),
-    ("organising-team", "Organising Team"),
-    ("closing", "Closing Ceremony"),
-    ("award", "Award Distribution"),
-]
-
-
-def get_event_gallery():
-    """Build a gallery from local event photos without editing templates."""
-    if not EVENTS_DIR.exists():
-        return []
-
-    photos = []
-    for image_path in sorted(EVENTS_DIR.iterdir(), key=lambda item: item.name.lower()):
-        if image_path.is_file() and image_path.suffix.lower() in ALLOWED_IMAGE_EXTENSIONS:
-            stem = image_path.stem.replace("_", " ").replace("-", " ").strip()
-            caption = " ".join(stem.split()).title() or "Conference moment"
-            category = "Conference Moments"
-            if image_path.name == CONFERENCE_2026_IMAGE:
-                caption = "RNSIT MUN 2026 organising committee"
-                category = "Organising Team"
-            lowered = image_path.stem.lower().replace("_", "-")
-            if category == "Conference Moments":
-                for prefix, label in PHOTO_CATEGORIES:
-                    if lowered.startswith(prefix):
-                        category = label
-                        break
-            photos.append({
-                "url": url_for("static", filename=f"images/events/{image_path.name}"),
-                "caption": caption,
-                "category": category,
-                "filename": image_path.name,
-            })
-    return photos
+COMMITTEES = CONFERENCE["committees"]
 
 
 def validate_email(value):
@@ -229,16 +50,20 @@ REGISTRATION_TOKEN_LOCK = threading.Lock()
 
 
 class EmailConfigurationError(Exception):
-    """Raised when registration email settings are incomplete or disabled."""
+    """Raised when SMTP email settings are incomplete or disabled."""
 
 
-def get_smtp_configuration():
+def get_smtp_configuration(require_admin=False):
     if not REGISTRATION_EMAIL_ENABLED:
-        raise EmailConfigurationError("Registration email is disabled in server configuration.")
+        raise EmailConfigurationError("Website email is disabled in server configuration.")
 
-    names = ("SMTP_HOST", "SMTP_PORT", "SMTP_USE_TLS", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_SENDER", "ADMIN_EMAIL")
+    names = ("SMTP_HOST", "SMTP_PORT", "SMTP_USE_TLS", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_SENDER")
     settings = {name: os.getenv(name, "").strip() for name in names}
     missing = [name for name, value in settings.items() if not value]
+    if require_admin:
+        settings["ADMIN_EMAIL"] = os.getenv("ADMIN_EMAIL", "").strip()
+        if not settings["ADMIN_EMAIL"]:
+            missing.append("ADMIN_EMAIL")
     if missing:
         raise EmailConfigurationError("Missing required email settings: " + ", ".join(missing))
     try:
@@ -253,7 +78,7 @@ def get_smtp_configuration():
 
 def build_registration_messages(values, submitted_at):
     """Create the admin notification and receipt-only applicant confirmation."""
-    settings = get_smtp_configuration()
+    settings = get_smtp_configuration(require_admin=True)
     rows = [
         ("Full name", values["full_name"]),
         ("Email", values["email"]),
@@ -273,36 +98,36 @@ def build_registration_messages(values, submitted_at):
     )
 
     admin_message = EmailMessage()
-    admin_message["Subject"] = f"New RNSIT MUN Registration – {values['full_name']}"
+    admin_message["Subject"] = f"New RNSIT MUN Interest – {values['full_name']}"
     admin_message["From"] = settings["SMTP_SENDER"]
     admin_message["To"] = settings["ADMIN_EMAIL"]
-    admin_message.set_content(f"New RNSIT MUN registration\n\n{plain_rows}")
+    admin_message.set_content(f"New RNSIT MUN future-edition interest\n\n{plain_rows}")
     admin_message.add_alternative(
         "<html><body style='font-family:Arial,sans-serif;color:#1d2732'>"
-        "<h2 style='color:#101b2d'>New RNSIT MUN registration</h2>"
+        "<h2 style='color:#101b2d'>New RNSIT MUN future-edition interest</h2>"
         f"<table style='border-collapse:collapse;width:100%;max-width:680px'>{html_rows}</table></body></html>",
         subtype="html",
     )
 
     applicant_name = values["full_name"]
     receipt_text = (
-        f"Hello {applicant_name},\n\nThank you for submitting your registration for RNSIT MUN.\n\n"
-        "We have successfully received your registration details. Your information has been submitted to the organising team for review.\n\n"
-        "Further communication regarding your application will be shared through the official communication channels.\n\n"
-        "Thank you for your interest in RNSIT MUN.\n\nRegards,\nRNSIT MUN Organising Team"
+        f"Hello {applicant_name},\n\nThank you for registering your interest in future RNSIT MUN Society editions.\n\n"
+        "Your interest form has been received and shared with the organising team. This is not a conference registration or confirmation of a place.\n\n"
+        "Future announcements will be shared through the Society’s official communication channels.\n\n"
+        "Regards,\nRNSIT MUN Society"
     )
     applicant_message = EmailMessage()
-    applicant_message["Subject"] = "Registration Received – RNSIT MUN"
+    applicant_message["Subject"] = "Interest Received – RNSIT MUN Society"
     applicant_message["From"] = settings["SMTP_SENDER"]
     applicant_message["To"] = values["email"]
     applicant_message.set_content(receipt_text)
     applicant_message.add_alternative(
         "<html><body style='font-family:Arial,sans-serif;color:#1d2732;line-height:1.6'>"
         f"<p>Hello {escape(applicant_name)},</p>"
-        "<p>Thank you for submitting your registration for RNSIT MUN.</p>"
-        "<p>We have successfully received your registration details. Your information has been submitted to the organising team for review.</p>"
-        "<p>Further communication regarding your application will be shared through the official communication channels.</p>"
-        "<p>Thank you for your interest in RNSIT MUN.</p><p>Regards,<br>RNSIT MUN Organising Team</p></body></html>",
+        "<p>Thank you for registering your interest in future RNSIT MUN Society editions.</p>"
+        "<p>Your interest form has been received and shared with the organising team. This is not a conference registration or confirmation of a place.</p>"
+        "<p>Future announcements will be shared through the Society’s official communication channels.</p>"
+        "<p>Regards,<br>RNSIT MUN Society</p></body></html>",
         subtype="html",
     )
     return settings, (admin_message, applicant_message)
@@ -319,6 +144,29 @@ def send_registration_emails(values, submitted_at):
             smtp.send_message(message)
 
 
+def send_contact_email(values):
+    """Send a website enquiry to the configured admin inbox."""
+    settings = get_smtp_configuration(require_admin=True)
+    message = EmailMessage()
+    message["Subject"] = f"RNSIT MUN website enquiry: {values['subject']}"
+    message["From"] = settings["SMTP_SENDER"]
+    message["To"] = settings["ADMIN_EMAIL"]
+    message["Reply-To"] = values["email"]
+    message.set_content(
+        "A message was sent through the RNSIT MUN website contact form.\n\n"
+        f"Name: {values['name']}\n"
+        f"Email: {values['email']}\n"
+        f"Subject: {values['subject']}\n\n"
+        f"{values['message']}\n"
+    )
+    with smtplib.SMTP(settings["SMTP_HOST"], settings["SMTP_PORT"], timeout=SMTP_TIMEOUT_SECONDS) as smtp:
+        smtp.ehlo()
+        smtp.starttls()
+        smtp.ehlo()
+        smtp.login(settings["SMTP_USERNAME"], settings["SMTP_PASSWORD"])
+        smtp.send_message(message)
+
+
 def new_registration_token():
     token = uuid.uuid4().hex
     session["registration_form_token"] = token
@@ -327,73 +175,79 @@ def new_registration_token():
 
 @app.context_processor
 def inject_site_data():
-    return {"site_name": "RNSIT MUN", "year": 2026}
+    endpoint_pages = {
+        "home": "Home", "about": "About", "conferences": "Conference", "events": "Events",
+        "members": "Secretariat", "resources": "Resources", "registration": "Registration",
+        "contact": "Contact", "venue": "Venue", "page_not_found": "Page not found",
+    }
+    page_key = endpoint_pages.get(request.endpoint, "Home")
+    title, description = PAGE_META[page_key]
+    return {
+        "site_name": SITE["name"],
+        "site": SITE,
+        "venue_info": VENUE,
+        "year": 2026,
+        "page_title": title,
+        "page_description": description,
+    }
 
 
 @app.get("/")
 def home():
-    photos = get_event_gallery()
-    featured_photo = next((photo for photo in photos if photo["filename"] == CONFERENCE_2026_IMAGE), None)
     return render_template(
         "index.html",
-        committees=COMMITTEES[:4],
-        photos=photos,
-        featured_photo=featured_photo,
-        leaders=LEADERSHIP_2026,
-        event=EVENT,
-        conference_url=CONFERENCE_2026_URL,
+        leaders=SECRETARIAT[:2],
+        conference=CONFERENCE,
         page="Home",
     )
 
 
 @app.get("/about")
 def about():
-    return render_template("about.html", page="About")
+    return render_template("about.html", history=HISTORY, page="About")
 
 
 @app.get("/committees")
 def committees():
-    return render_template("committees.html", committees=COMMITTEES, page="Committees")
+    return redirect(url_for("conferences") + "#committees", code=302)
+
+
+@app.get("/conferences")
+def conferences():
+    photo = {
+        "url": url_for("static", filename=CONFERENCE["image"]),
+        "caption": "RNS MUN 2026 organising committee",
+    }
+    return render_template(
+        "conference.html",
+        conference=CONFERENCE,
+        committees=CONFERENCE["committees"],
+        photo=photo,
+        page="Conference",
+    )
 
 
 @app.get("/events")
 def events():
-    photos = get_event_gallery()
-    archive_entries = []
-    featured_filenames = set()
-    for conference in CONFERENCES:
-        featured_filename = conference.get("image_filename")
-        featured_photo = next((photo for photo in photos if photo["filename"] == featured_filename), None)
-        if featured_filename:
-            featured_filenames.add(featured_filename)
-        archive_entries.append({"conference": conference, "photo": featured_photo})
-    gallery_photos = [photo for photo in photos if photo["filename"] not in featured_filenames]
-    photo_groups = []
-    for photo in gallery_photos:
-        group = next((item for item in photo_groups if item["name"] == photo["category"]), None)
-        if group is None:
-            group = {"name": photo["category"], "photos": []}
-            photo_groups.append(group)
-        group["photos"].append(photo)
-    return render_template(
-        "events.html",
-        photos=photos,
-        archive_entries=archive_entries,
-        photo_groups=photo_groups,
-        page="Events",
-    )
+    return render_template("events.html", activities=ACTIVITIES, page="Events")
 
 
 @app.get("/members")
 def members():
-    groups = ["Secretariat", "Executive Board", "Organising Committee", "Technical Team"]
-    return render_template("members.html", members=MEMBERS, groups=groups, leaders=LEADERSHIP_2026, page="Secretariat")
+    return render_template(
+        "members.html", leaders=SECRETARIAT, departments=ORGANISING_COMMITTEE,
+        boards=EXECUTIVE_BOARD, page="Secretariat",
+    )
 
 
 @app.get("/resources")
 def resources():
-    categories = sorted({item["category"] for item in RESOURCES})
-    return render_template("resources.html", resources=RESOURCES, categories=categories, page="Resources")
+    return render_template("resources.html", resources=RESOURCES, categories=sorted({item["category"] for item in RESOURCES}), page="Resources")
+
+
+@app.get("/venue")
+def venue():
+    return render_template("venue.html", venue=VENUE, page="Venue")
 
 
 @app.route("/registration", methods=["GET", "POST"])
@@ -461,7 +315,7 @@ def registration():
             form_error = "We could not send the registration emails. Please try again later; your entries are still here."
         if form_error:
             return render_template("registration.html", committees=COMMITTEES, errors=errors, values=values, form_error=form_error, form_token=new_registration_token(), page="Registration"), 503
-        flash("Your registration was received. A confirmation email has been sent, and the organising team has been notified.", "success")
+        flash("Your interest was received. A confirmation email has been sent, and the organising team has been notified.", "success")
         return redirect(url_for("registration"))
     return render_template("registration.html", committees=COMMITTEES, errors=errors, values=values, form_error=form_error, form_token=new_registration_token(), page="Registration")
 
@@ -470,6 +324,7 @@ def registration():
 def contact():
     errors = {}
     values = {}
+    form_error = ""
     if request.method == "POST":
         values = {key: request.form.get(key, "").strip() for key in ("name", "email", "subject", "message")}
         for field, label in (("name", "name"), ("email", "email address"), ("subject", "subject"), ("message", "message")):
@@ -477,11 +332,29 @@ def contact():
                 errors[field] = f"Please enter your {label}."
         if values["email"] and not validate_email(values["email"]):
             errors["email"] = "Enter a valid email address."
+        for field, limit in (("name", 120), ("subject", 180), ("message", 5000)):
+            if len(values[field]) > limit:
+                errors[field] = f"Please keep this field under {limit} characters."
+        if any(ord(character) < 32 for character in values["name"] + values["subject"]):
+            errors["subject"] = "Please keep your name and subject on one line."
         if errors:
-            return render_template("contact.html", errors=errors, values=values, page="Contact"), 400
-        flash("Thanks for your message. This is a demonstration form; no message was sent or saved.", "success")
+            return render_template("contact.html", errors=errors, values=values, form_error=form_error, page="Contact"), 400
+        try:
+            send_contact_email(values)
+        except EmailConfigurationError as error:
+            app.logger.error("Contact email configuration unavailable: %s", error)
+            form_error = "Email is not configured right now. Please email the Society directly."
+        except (smtplib.SMTPException, TimeoutError, OSError):
+            app.logger.exception("Contact SMTP delivery failed")
+            form_error = "Your message could not be sent. Please try again later or email the Society directly."
+        except Exception:
+            app.logger.exception("Contact email workflow failed")
+            form_error = "Your message could not be sent. Please try again later or email the Society directly."
+        if form_error:
+            return render_template("contact.html", errors=errors, values=values, form_error=form_error, page="Contact"), 503
+        flash("Your message was sent to RNSIT MUNSoc. The team can reply directly to your email address.", "success")
         return redirect(url_for("contact"))
-    return render_template("contact.html", errors=errors, values=values, page="Contact")
+    return render_template("contact.html", errors=errors, values=values, form_error=form_error, page="Contact")
 
 
 @app.errorhandler(404)

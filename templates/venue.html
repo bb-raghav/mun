@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-hero page-hero-light"><div class="wrap page-hero-inner"><p class="eyebrow eyebrow-dark"><span class="eyebrow-rule"></span> RNS MUN 2026 venue</p><h1>Find your<br><em>way here.</em></h1><p class="page-lead">RNS Institute of Technology is in Channasandra, RR Nagar, in south-west Bengaluru.</p></div><span class="page-hero-mark" aria-hidden="true">05</span></section>
+
+<section class="section-pad wrap venue-section"><div class="venue-address"><div class="section-kicker">01 <span>Address</span></div><h2>{{ venue.name }}</h2><address>{{ venue.address }}</address><a class="button button-navy" href="{{ venue.map_url }}" target="_blank" rel="noopener noreferrer">Open location in Maps <span aria-hidden="true">↗</span></a></div><div class="venue-access"><div class="section-kicker">02 <span>Nearby transport</span></div><article><span>RAIL</span><h3>{{ venue.railway }}</h3><p>{{ venue.railway_distance }}</p></article><article><span>METRO</span><h3>{{ venue.metro }}</h3><p>{{ venue.metro_distance }}</p></article><article><span>BUS</span><h3>{{ venue.bus_stop }}</h3><p>{{ venue.bus_distance }}</p></article><p class="venue-distance-note">Distances are approximate and provided in the official venue information. Check current routes before travelling.</p></div></section>
+
+<section class="venue-map-embed-section wrap" aria-label="Venue map"><iframe src="{{ venue.map_embed_url }}" title="Map showing RNS Institute of Technology in Bengaluru" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></section>
+
+<section class="venue-map-section"><div class="wrap venue-map-inner"><div><p class="eyebrow"><span class="eyebrow-rule"></span> Directions</p><h2>RNS Institute of<br><em>Technology.</em></h2><p>Use the map link for current directions and route planning.</p></div><a class="button button-gold" href="{{ venue.map_url }}" target="_blank" rel="noopener noreferrer">Plan your route <span aria-hidden="true">↗</span></a></div></section>
+{% endblock %}

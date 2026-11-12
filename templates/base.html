@@ -4,8 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101b2d">
-  <meta name="description" content="{{ page_description|default('RNSIT Model United Nations — a forum for diplomacy, dialogue and decisions.') }}">
-  <title>{{ page|default('Home') }} | RNSIT MUN</title>
+  <meta name="description" content="{{ page_description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ page_title }}">
+  <meta property="og:description" content="{{ page_description }}">
+  <meta property="og:site_name" content="RNSIT MUN Society">
+  <title>{{ page_title }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
@@ -18,7 +22,7 @@
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="{{ url_for('home') }}" aria-label="RNSIT MUN home">
-        <span class="brand-mark" aria-hidden="true">RM</span>
+        <img class="brand-logo" src="{{ url_for('static', filename='images/MUN_logo-Bh1Arytf.webp') }}" alt="">
         <span class="brand-copy"><strong>RNSIT MUN</strong><small>Model United Nations</small></span>
       </a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">
@@ -26,11 +30,11 @@
       </button>
       <nav class="primary-nav" id="primary-navigation" aria-label="Main navigation">
         {% set nav_items = [
-          ('Home', 'home'), ('About', 'about'), ('Committees', 'committees'), ('Events', 'events'),
-          ('Secretariat', 'members'), ('Resources', 'resources'), ('Registration', 'registration'), ('Contact', 'contact')
+          ('Home', 'home', 'Home'), ('About', 'about', 'About'), ('RNS MUN 2026', 'conferences', 'Conference'), ('Events', 'events', 'Events'),
+          ('Team', 'members', 'Secretariat'), ('Resources', 'resources', 'Resources'), ('Venue', 'venue', 'Venue'), ('Contact', 'contact', 'Contact')
         ] %}
-        {% for label, endpoint in nav_items %}
-        <a href="{{ url_for(endpoint) }}" {% if page == label %}aria-current="page"{% endif %}>{{ label }}</a>
+        {% for label, endpoint, page_name in nav_items %}
+        <a href="{{ url_for(endpoint) }}" {% if page == page_name %}aria-current="page"{% endif %}>{{ label }}</a>
         {% endfor %}
       </nav>
     </div>
@@ -55,31 +59,32 @@
           <span class="brand-mark" aria-hidden="true">RM</span>
           <span class="brand-copy"><strong>RNSIT MUN</strong><small>Model United Nations</small></span>
         </a>
-        <p>A forum for thoughtful debate, diplomacy and shared understanding.</p>
+        <p>RNSIT MUNSoc gives students space to explore world affairs, debate and diplomacy.</p>
       </div>
       <div class="footer-column">
         <h2>Explore</h2>
         <a href="{{ url_for('about') }}">About</a>
-        <a href="{{ url_for('committees') }}">Committees</a>
+        <a href="{{ url_for('conferences') }}#committees">Committees</a>
         <a href="{{ url_for('events') }}">Events</a>
-        <a href="{{ url_for('members') }}">Secretariat</a>
+        <a href="{{ url_for('members') }}">Team</a>
       </div>
       <div class="footer-column">
         <h2>Participate</h2>
         <a href="{{ url_for('resources') }}">Resources</a>
-        <a href="{{ url_for('registration') }}">Registration</a>
+        <a href="{{ url_for('conferences') }}">RNS MUN 2026</a>
+        <a href="{{ url_for('venue') }}">Venue</a>
+        <a href="{{ url_for('registration') }}">Register interest</a>
         <a href="{{ url_for('contact') }}">Contact</a>
       </div>
       <div class="footer-column footer-contact">
         <h2>Contact</h2>
-        <p>Official email to be added</p>
-        <p>Campus location to be confirmed</p>
-        <a href="{{ url_for('contact') }}">Send an enquiry <span aria-hidden="true">↗</span></a>
+        <a href="{{ url_for('contact') }}#contact-form">Send an enquiry</a>
+        <a class="social-link" href="{{ site.instagram_url }}" target="_blank" rel="noopener noreferrer"><svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="17" height="17" rx="5.2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17.6" cy="6.6" r="1" fill="currentColor"/></svg>{{ site.instagram }}</a>
       </div>
     </div>
     <div class="footer-bottom wrap">
       <span>© {{ year }} RNSIT MUN</span>
-      <span>Website prototype · Information to be confirmed</span>
+      <span>RNS Institute of Technology · Bengaluru</span>
       <a href="#main-content">Back to top ↑</a>
     </div>
   </footer>
